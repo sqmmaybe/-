@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<script src="three.r73.js"></script>
+<script src="OrbitControls.js"></script>
+<script src="https://cdn.bootcss.com/animejs/2.2.0/anime.js"></script>
+
+<body>
+    <script>
+        var container;
+        var camera, scene, renderer;
+        //用于轨道控制
+        var orbitControls, clock, delta;
+        var colors = [ //color select options
+            'white', 'black', 'yellow'
+        ]
+        main();
+        render();
+
+        function main() {
+            //添加一个div元素
+            container = document.createElement('div');
+            document.body.appendChild(container);
+            scene = new THREE.Scene();
+            //透视照相机
+            camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(100, 300, 100); //设置照相机的位置
+            camera.lookAt(new THREE.Vector3(0, 0, 0)); //让照相机指向原点
+            // antialias:true 增加抗锯齿效果
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+            renderer.setClearColor(new THREE.Color(colors[0])); //设置背景窗口颜色
+            renderer.setSize(window.innerWidth, window.innerHeight); //设置窗口尺寸
+            container.appendChild(renderer.domElement); //获取canvas元素
+
+            //添加轨道控制器
+            orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+            orbitControls.target = new THREE.Vector3(0, 0, 0); //控制焦点
+            orbitControls.autoRotate = false; //关闭自动旋转
+            clock = new THREE.Clock(); //用于更新轨道控制器
+
+            //给场景添加光源
+            //1.自然光
+            var ambientLight = new THREE.AmbientLight(0x606060);
+            scene.add(ambientLight);
+            //平行光源
+            var directionalLight = new THREE.DirectionalLight(0xffffff);
+            directionalLight.position.set(1, 0.75, 0.5).normalize();
+            scene.add(directionalLight);
+            plane();
+            cube();
+            cube2();
+            // sphere();
+            cylinder();
+            cube3();
+            cube4();
+            cube5();
+            angleCube1();
+            angleCube2();
+            angleCube3();
+            angleCube4();
+            sphere1();
+            sphere2();
+            sphere3();
+            sphere4();
+            frontcube();
+            anime();
+        }
+
+        //创建一个平面
+        function plane() {
+            var planeGeo = new THREE.PlaneGeometry(150, 150); //创建平面
+            var planeMat = new THREE.MeshLambertMaterial({ //创建材料
+                color: 0x666666,
+                wireframe: false
+            });
+
+            var planeMesh = new THREE.Mesh(planeGeo, planeMat); //创建网格模型
+            planeMesh.position.set(0, 0, 0); //设置平面坐标
+            planeMesh.rotation.x = -0.5 * Math.PI; //绕x逆时针旋转90度
+            // planeMesh.rotation.y = 0.5 * Math.PI;
+            planeMesh.rotation.z = -0.25 * Math.PI;
+            scene.add(planeMesh); //加入场景中；
+        };
+        // 一个立方体
+
+        function cube() {
+            var cubeGeo = new THREE.CubeGeometry(20, 20, 20);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: 'red',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+            cubeMesh.position.set(0, 40, 0);
+            scene.add(cubeMesh);
+        }
+
+        function cube2() {
+            var cubeGeo = new THREE.CubeGeometry(30, 30, 30);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: 'blue',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+            cubeMesh.position.set(0, 15, 0);
+            scene.add(cubeMesh);
+        };
+
+        //长方体
+        function cube3() {
+            var CubeGeo = new THREE.CubeGeometry(140, 40, 5);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B3626',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(CubeGeo, cubeMaterial);
+            // var instance = Math.pow(75, 2) * 2;
+            // var innerInstance = Math.pow(10, 2) * 2;
+            // console.log(instance);
+            var inst = Math.sqrt(75 * 75 / 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 / 2);
+            console.log(inst);
+            // console.log(Math.sqrt(instance));
+            cubeMesh.position.set(-(inst - inst2), 20, -(inst - inst2));
+            cubeMesh.rotation.y = 0.25 * Math.PI;
+
+            scene.add(cubeMesh)
+        }
+
+        //长方体2
+        function cube4() {
+            var CubeGeo = new THREE.CubeGeometry(140, 40, 5);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B3626',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(CubeGeo, cubeMaterial);
+            // var instance = Math.pow(75, 2) * 2;
+            // var innerInstance = Math.pow(10, 2) * 2;
+            // console.log(instance);
+            var inst = Math.sqrt(75 * 75 / 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 / 2);
+            console.log(inst);
+            // console.log(Math.sqrt(instance));
+            cubeMesh.position.set(inst - inst2, 20, -(inst - inst2));
+            cubeMesh.rotation.y = 0.75 * Math.PI;
+
+            scene.add(cubeMesh)
+        };
+
+        //长方体3
+        function cube5() {
+            var CubeGeo = new THREE.CubeGeometry(140, 40, 5);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B3626',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(CubeGeo, cubeMaterial);
+            // var instance = Math.pow(75, 2) * 2;
+            // var innerInstance = Math.pow(10, 2) * 2;
+            // console.log(instance);
+            var inst = Math.sqrt(75 * 75 / 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 / 2);
+            console.log(inst);
+            // console.log(Math.sqrt(instance));
+            cubeMesh.position.set(-(inst - inst2), 20, inst - inst2);
+            cubeMesh.rotation.y = 0.75 * Math.PI;
+
+            scene.add(cubeMesh)
+        }
+
+        //对角长方体1
+        function angleCube1() {
+            var cubeGeo = new THREE.CubeGeometry(5, 60, 5);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+            var inst = Math.sqrt(75 * 75 * 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 * 2);
+            cubeMesh.position.set(inst - inst2, 30, 0);
+            cubeMesh.rotation.y = 0.75 * Math.PI;
+            scene.add(cubeMesh);
+        }
+
+        //对角长方体2
+        function angleCube2() {
+            var cubeGeo = new THREE.CubeGeometry(5, 60, 5);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+            var inst = Math.sqrt(75 * 75 * 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 * 2);
+            cubeMesh.position.set(-(inst - inst2), 30, 0);
+            cubeMesh.rotation.y = 0.75 * Math.PI;
+            scene.add(cubeMesh);
+        };
+        //对角长方体3
+        function angleCube3() {
+            var cubeGeo = new THREE.CubeGeometry(5, 60, 5);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+            var inst = Math.sqrt(75 * 75 * 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 * 2);
+            cubeMesh.position.set(0, 30, -(inst - inst2));
+            cubeMesh.rotation.y = 0.75 * Math.PI;
+            scene.add(cubeMesh);
+        };
+        //对角长方体3
+        function angleCube4() {
+            var cubeGeo = new THREE.CubeGeometry(5, 60, 5);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+            var inst = Math.sqrt(75 * 75 * 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 * 2);
+            cubeMesh.position.set(0, 30, inst - inst2);
+            cubeMesh.rotation.y = 0.75 * Math.PI;
+            scene.add(cubeMesh);
+        };
+
+        //顶部球体
+        function sphere1() {
+            var sphereGeo = new THREE.SphereGeometry(2.5, 40, 40);
+            var sphereMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var sphereMesh = new THREE.Mesh(sphereGeo, sphereMaterial);
+            var inst = Math.sqrt(75 * 75 * 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 * 2);
+            sphereMesh.position.set(inst - inst2, 62.5, 0);
+            scene.add(sphereMesh);
+        }
+
+        function sphere2() {
+            var sphereGeo = new THREE.SphereGeometry(2.5, 40, 40);
+            var sphereMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var sphereMesh = new THREE.Mesh(sphereGeo, sphereMaterial);
+            var inst = Math.sqrt(75 * 75 * 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 * 2);
+            sphereMesh.position.set(-(inst - inst2), 62.5, 0);
+            scene.add(sphereMesh);
+        };
+
+        function sphere3() {
+            var sphereGeo = new THREE.SphereGeometry(2.5, 40, 40);
+            var sphereMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var sphereMesh = new THREE.Mesh(sphereGeo, sphereMaterial);
+            var inst = Math.sqrt(75 * 75 * 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 * 2);
+            sphereMesh.position.set(0, 62.5, inst - inst2);
+            scene.add(sphereMesh);
+        };
+
+        function sphere4() {
+            var sphereGeo = new THREE.SphereGeometry(2.5, 40, 40);
+            var sphereMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var sphereMesh = new THREE.Mesh(sphereGeo, sphereMaterial);
+            var inst = Math.sqrt(75 * 75 * 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 * 2);
+            sphereMesh.position.set(0, 62.5, -(inst - inst2));
+            scene.add(sphereMesh);
+        }
+
+        //正门
+        function frontcube() {
+            var cubeGeo = new THREE.CubeGeometry(40, 20, 5);
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+            var inst = Math.sqrt(75 * 75 / 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 / 2);
+            cubeMesh.position.set(inst - inst2, 10, inst - inst2);
+            cubeMesh.rotation.y = 0.25 * Math.PI;
+            scene.add(cubeMesh);
+        }
+
+        //半圆柱
+        function cylinder() {
+            const cylinders = document.createElement('div');
+            cylinders.className = 'cylinders';
+            container.appendChild(cylinders);
+
+            var cylinder = new THREE.CylinderGeometry(2.5, 2.5, 40, 40, 40);
+            var cylinderMaterial = new THREE.MeshLambertMaterial({
+                color: '#8B0000',
+                wireframe: false
+            });
+            var cylinderMesh = new THREE.Mesh(cylinder, cylinderMaterial);
+            var inst = Math.sqrt(75 * 75 / 2);
+            var inst2 = Math.sqrt(2.5 * 2.5 / 2);
+            cylinderMesh.position.set(inst - inst2, 21.25, inst - inst2);
+            cylinderMesh.rotation.x = -0.5 * Math.PI;
+            cylinderMesh.rotation.z = -0.25 * Math.PI;
+            scene.add(cylinderMesh);
+
+        }
+
+
+        // function amine() {
+        //     var demo = document.getElementsByClassName('cylinders');
+        //     var book = anime({
+        //         target: demo,
+        //         translateY: 200,
+        //         translateX: 50,
+        //         loop: true,
+        //         duration: 300,
+
+        //     });
+        //     // console.log(demo);
+
+        // }
+
+
+
+        function render() {
+            delta = clock.getDelta();
+            orbitControls.update(delta);
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+            // amine();
+        }
+    </script>
+</body>
+
+</html>
